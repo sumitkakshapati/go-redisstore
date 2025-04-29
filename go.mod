@@ -1,10 +1,12 @@
-module github.com/sethvargo/go-redisstore
+module github.com/sumitkakshapati/go-redisstore
 
-go 1.17
+go 1.22
+
+toolchain go1.24.2
 
 require (
 	github.com/gomodule/redigo v1.8.9
-	github.com/sethvargo/go-limiter v0.7.2
+	github.com/sumitkakshapati/go-limiter v1.0.2
 )
 
 require github.com/stretchr/testify v1.8.1 // indirect

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gomodule/redigo/redis"
-	"github.com/sethvargo/go-redisstore"
+	"github.com/sumitkakshapati/go-redisstore"
 )
 
 func ExampleNew() {
@@ -25,7 +25,7 @@ func ExampleNew() {
 	}
 	defer store.Close(ctx)
 
-	limit, remaining, reset, ok, err := store.Take(ctx, "my-key")
+	limit, remaining, reset, _, ok, err := store.Take(ctx, "my-key")
 	if err != nil {
 		log.Fatal(err)
 	}

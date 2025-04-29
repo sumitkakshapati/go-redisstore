@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gomodule/redigo/redis"
-	"github.com/sethvargo/go-limiter"
+	"github.com/sumitkakshapati/go-limiter"
 )
 
 const (
@@ -103,7 +103,7 @@ func NewWithPool(c *Config, pool *redis.Pool) (*Store, error) {
 // limit, remaining tokens, and reset time, if one was found. Any errors
 // connecting to the store or parsing the return value are considered failures
 // and fail the take.
-func (s *Store) Take(ctx context.Context, key string) (limit uint64, remaining uint64, next uint64, ok bool, retErr error) {
+func (s *Store) Take(ctx context.Context, key string) (limit uint64, remaining uint64, next uint64, interval time.Duration, ok bool, retErr error) {
 	// If the store is stopped, all requests are rejected.
 	if atomic.LoadUint32(&s.stopped) == 1 {
 		retErr = limiter.ErrStopped
@@ -141,12 +141,13 @@ func (s *Store) Take(ctx context.Context, key string) (limit uint64, remaining u
 	}
 
 	limit, remaining, next, ok = uint64(a[0]), uint64(a[1]), uint64(a[2]), a[3] == 1
+	interval = s.interval
 	return
 }
 
 // Get gets the current limit and remaining tokens for the key. It does not
 // reduce or reset any counters.
-func (s *Store) Get(ctx context.Context, key string) (limit, remaining uint64, retErr error) {
+func (s *Store) Get(ctx context.Context, key string) (limit, remaining uint64, interval time.Duration, retErr error) {
 	// If the store is stopped, all requests are rejected.
 	if atomic.LoadUint32(&s.stopped) == 1 {
 		retErr = limiter.ErrStopped
@@ -178,6 +179,7 @@ func (s *Store) Get(ctx context.Context, key string) (limit, remaining uint64, r
 
 	limit = uint64(result[0])
 	remaining = uint64(result[1])
+	interval = s.interval
 	return
 }
 

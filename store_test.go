@@ -62,7 +62,7 @@ func TestStore_Exercise(t *testing.T) {
 
 	// Get when no config exists
 	{
-		limit, remaining, err := s.Get(ctx, key)
+		limit, remaining, _, err := s.Get(ctx, key)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -77,7 +77,7 @@ func TestStore_Exercise(t *testing.T) {
 
 	// Take with no key configuration - this should use the default values
 	{
-		limit, remaining, reset, ok, err := s.Take(ctx, key)
+		limit, remaining, reset, _, ok, err := s.Take(ctx, key)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -97,7 +97,7 @@ func TestStore_Exercise(t *testing.T) {
 
 	// Get the value
 	{
-		limit, remaining, err := s.Get(ctx, key)
+		limit, remaining, _, err := s.Get(ctx, key)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -118,7 +118,7 @@ func TestStore_Exercise(t *testing.T) {
 
 	// Get the value again
 	{
-		limit, remaining, err := s.Get(ctx, key)
+		limit, remaining, _, err := s.Get(ctx, key)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -132,7 +132,7 @@ func TestStore_Exercise(t *testing.T) {
 
 	// Take again, this should use the new values
 	{
-		limit, remaining, reset, ok, err := s.Take(ctx, key)
+		limit, remaining, reset, _, ok, err := s.Take(ctx, key)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -152,7 +152,7 @@ func TestStore_Exercise(t *testing.T) {
 
 	// Get the value again
 	{
-		limit, remaining, err := s.Get(ctx, key)
+		limit, remaining, _, err := s.Get(ctx, key)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -170,7 +170,7 @@ func TestStore_Exercise(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		limit, remaining, reset, ok, err := s.Take(ctx, key)
+		limit, remaining, reset, _, ok, err := s.Take(ctx, key)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -190,7 +190,7 @@ func TestStore_Exercise(t *testing.T) {
 
 	// Get the value one final time
 	{
-		limit, remaining, err := s.Get(ctx, key)
+		limit, remaining, _, err := s.Get(ctx, key)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -272,7 +272,7 @@ func TestStore_Take(t *testing.T) {
 			takeCh := make(chan *result, 2*tc.tokens)
 			for i := uint64(1); i <= 2*tc.tokens; i++ {
 				go func() {
-					limit, remaining, reset, ok, err := s.Take(ctx, key)
+					limit, remaining, reset, _, ok, err := s.Take(ctx, key)
 					takeCh <- &result{limit, remaining, time.Until(time.Unix(0, int64(reset))), ok, err}
 				}()
 			}
@@ -328,7 +328,7 @@ func TestStore_Take(t *testing.T) {
 			time.Sleep(tc.interval)
 
 			// Verify we can take once more
-			_, _, _, ok, err := s.Take(ctx, key)
+			_, _, _, _, ok, err := s.Take(ctx, key)
 			if err != nil {
 				t.Fatal(err)
 			}
